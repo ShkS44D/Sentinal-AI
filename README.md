@@ -1,70 +1,110 @@
-# Sentinel AI | Network Intrusion Detection System (IDS)
+# 🛡️ Sentinel AI | Network Intrusion Detection System (IDS)
 
-**Sentinel AI** is a high-performance, machine-learning-driven security command center designed to monitor network traffic and identify anomalies in real time. By leveraging a **Random Forest** classification model, the system achieves near-perfect accuracy in distinguishing between normal traffic and potential network breaches.
+![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
+![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B.svg)
+![Scikit-Learn](https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-F7931E.svg)
+![Security](https://img.shields.io/badge/Security-Network%20Analysis-success.svg)
 
-## Key Features
+**Sentinel AI** is a high-performance, machine-learning-driven security command center designed to monitor network traffic and identify anomalies in real-time.
 
-* **AI-Powered Detection:** Utilizes a trained Random Forest model with **99.8% precision** to identify network threats.
-* **Real-Time Dashboard:** A professional "Command Center" interface built with **Streamlit** for monitoring system load, active sensors, and mitigated threats.
-* **Live Threat Analysis:** simulate or verify incoming packets against the AI engine to receive instant "Normal" or "Anomaly" classifications with confidence scores.
-* **Deep Analytics:** Visualizes feature importance (e.g., `src_bytes`, `dst_bytes`) using **Plotly** to explain the AI's decision-making process.
+Built for Security Operations Centers (SOC) and network administrators, it leverages a highly tuned **Random Forest classification model** to achieve near-perfect accuracy in distinguishing between normal, benign traffic and potential network breaches, such as DDoS attacks or port scanning.
 
-## Tech Stack
+## 🚀 Key Features
 
-* **Language:** Python.
-* **Frameworks:** Streamlit (UI), Scikit-learn (ML), Pandas (Data Handling).
-* **Visualization:** Plotly Express.
-* **Security Focus:** Network Traffic Analysis & Anomaly Detection.
+* **AI-Powered Threat Detection:** Utilizes a trained Random Forest model with an outstanding **99.8% precision** rate to accurately identify malicious network patterns.
+* **Real-Time SOC Dashboard:** A professional "Command Center" interface built with **Streamlit** for live monitoring of system load, active network sensors, and mitigated threats.
+* **Live Threat Analysis & Triage:** Simulate or verify incoming network packets against the AI engine to receive instant "Normal" or "Anomaly" classifications backed by confidence scores.
+* **Explainable AI (XAI) & Deep Analytics:** Visualizes feature importance (e.g., `src_bytes`, `dst_bytes`, connection duration) using **Plotly** to transparently explain the AI's decision-making process to security analysts.
 
-## Project Structure
+## 🧪 Tech Stack
 
-To run this project, ensure your directory is organized as follows to match the asset-loading logic:
+* **Backend & Logic:** Python
+* **Machine Learning:** Scikit-learn, Pandas, NumPy
+* **Frontend UI:** Streamlit
+* **Data Visualization:** Plotly Express
+* **Security Focus:** Network Traffic Analysis, Anomaly Detection, Intrusion Detection Systems (IDS)
 
-```text
-├── app.py                # Main Streamlit application
-├── models/               # Directory for ML artifacts
-│   ├── RandomForest_model.pkl
-│   ├── scaler.pkl
-│   ├── label_encoders.pkl
-│   ├── feature_names.pkl
-│   └── validation_with_labels.csv
-└── requirements.txt
+## 📋 Prerequisites
 
-```
+Before installing Sentinel AI, ensure your system has:
 
-## Getting Started
+* **Python 3.8+**
+* A package manager like `pip`
+* Git (optional, for cloning)
 
-### 1. Prerequisites
+## 🛠️ Installation & Setup
 
-* Python 3.8+
-* Virtual environment (recommended)
+It is highly recommended to use a virtual environment to avoid dependency conflicts.
 
-### 2. Installation
+**1. Clone the Repository**
 
 ```bash
-git clone https://github.com/yourusername/Sentinel-AI.git
+git clone https://github.com/ShkS44D/Sentinal-AI.git
 cd Sentinel-AI
-pip install -r requirements.txt
-
 ```
 
-### 3. Execution
+**2. Create & Activate a Virtual Environment**
 
-Run the command center using Streamlit:
+Windows:
+
+```powershell
+python -m venv venv
+.\venv\Scripts\activate
+```
+
+Mac/Linux:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**3. Install Dependencies**
+
+```bash
+pip install -r requirements.txt
+```
+
+## 💻 Usage
+
+**1. Start the Command Center**
+
+With your virtual environment activated, launch the Streamlit dashboard:
 
 ```bash
 streamlit run app.py
-
 ```
 
-## Model Performance
+**2. Analyze Traffic**
 
-The system primarily analyzes network indicators like source and destination bytes relative to duration. A sudden spike in these values is a strong indicator of DDoS or port-scan patterns, which the model flags with high confidence.
+* Your default web browser will automatically open to `http://localhost:8501`.
+* Navigate the sidebar to view the dashboard, run live network packet simulations, or explore the model's feature importance charts.
 
-## Author
+## 📂 Project Structure
+
+Ensure your directory is organized exactly as follows so the Streamlit application can locate the necessary ML artifacts:
+
+```text
+Sentinel-AI/
+│
+├── app.py                 # Main Streamlit command center application
+├── requirements.txt       # Project dependencies
+└── models/                # Directory for ML artifacts and encoders
+    ├── RandomForest_model.pkl
+    ├── scaler.pkl
+    ├── label_encoders.pkl
+    ├── feature_names.pkl
+    └── validation_with_labels.csv
+```
+
+## 📊 Model Performance
+
+The underlying Random Forest model analyzes key network indicators such as source bytes, destination bytes, and connection duration. Sudden spikes or irregular ratios in these specific features act as strong indicators of DoS (Denial of Service) or reconnaissance patterns, which the model flags with high confidence, minimizing false positives.
+
+## 👨‍💻 Author
 
 **Muhammad Saad Ahmed**
 
-**LinkedIn:** [shsaadahmed](https://www.linkedin.com/in/shsaadahmed/) 
-
- **Focus:** Cybersecurity Student | Penetration Tester
+* **Focus:** Cybersecurity, Offensive Security, Penetration Testing, & Bug Bounty Hunting.
+* **Academic Background:** B.S. Cyber Security, CASE Sir Syed Institute of Technology, Islamabad.
+* **LinkedIn:** [S44D](https://www.linkedin.com/in/shsaadahmed/)
