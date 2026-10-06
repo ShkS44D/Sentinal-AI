@@ -1,0 +1,26 @@
+{
+  "trained_at_utc": "2026-10-06T08:06:40.159027+00:00",
+  "dataset": "NSL-KDD",
+  "train_split": "KDDTrain+.txt",
+  "test_split": "KDDTest+.txt",
+  "train_rows": 125973,
+  "test_rows": 22544,
+  "sklearn_version": "1.6.1",
+  "random_seed": 42,
+  "git_commit": null,
+  "evaluation": {
+    "accuracy": 0.7636621717530163,
+    "precision": 0.9658597144630664,
+    "recall": 0.606249512974363,
+    "f1": 0.7449253159708924,
+    "false_positive_rate": 0.028318401812377717,
+    "roc_auc": 0.9655974759299302,
+    "pr_auc": 0.9653395559971732,
+    "confusion_matrix": {
+      "tn": 9436,
+      "fp": 275,
+      "fn": 5053,
+      "tp": 7780
+    }
+  }
+}

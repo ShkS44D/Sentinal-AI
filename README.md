@@ -1,110 +1,138 @@
-# 🛡️ Sentinel AI | Network Intrusion Detection System (IDS)
+# Sentinel IDS
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
-![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B.svg)
-![Scikit-Learn](https://img.shields.io/badge/Machine%20Learning-Scikit--Learn-F7931E.svg)
-![Security](https://img.shields.io/badge/Security-Network%20Analysis-success.svg)
+Sentinel IDS is a Streamlit demonstration of binary network connection
+classification using the NSL-KDD benchmark. It predicts **normal** or
+**anomaly** for stored test examples. It does not capture live traffic or
+identify a specific attack type.
 
-**Sentinel AI** is a high-performance, machine-learning-driven security command center designed to monitor network traffic and identify anomalies in real-time.
+## Measured performance
 
-Built for Security Operations Centers (SOC) and network administrators, it leverages a highly tuned **Random Forest classification model** to achieve near-perfect accuracy in distinguishing between normal, benign traffic and potential network breaches, such as DDoS attacks or port scanning.
+<!-- METRICS:START -->
+Random Forest on **NSL-KDD KDDTest+** (22,544 rows), trained on **KDDTrain+** (125,973 rows):
 
-## 🚀 Key Features
+| Accuracy | Precision | Recall | F1 | False positive rate | ROC-AUC | PR-AUC |
+|---:|---:|---:|---:|---:|---:|---:|
+| 76.37% | 96.59% | 60.62% | 74.49% | 2.83% | 96.56% | 96.53% |
 
-* **AI-Powered Threat Detection:** Utilizes a trained Random Forest model with an outstanding **99.8% precision** rate to accurately identify malicious network patterns.
-* **Real-Time SOC Dashboard:** A professional "Command Center" interface built with **Streamlit** for live monitoring of system load, active network sensors, and mitigated threats.
-* **Live Threat Analysis & Triage:** Simulate or verify incoming network packets against the AI engine to receive instant "Normal" or "Anomaly" classifications backed by confidence scores.
-* **Explainable AI (XAI) & Deep Analytics:** Visualizes feature importance (e.g., `src_bytes`, `dst_bytes`, connection duration) using **Plotly** to transparently explain the AI's decision-making process to security analysts.
+Training cross-validation F1 is 99.88%, while the official test F1 is 74.49%. Official test recall is 60.62%; the model misses many anomalies in this split.
+<!-- METRICS:END -->
 
-## 🧪 Tech Stack
+These numbers are generated from [reports/metrics.json](reports/metrics.json)
+by `python -m src.train`. See [the full report](reports/metrics.md) for the
+five-fold training comparison, confusion matrix and evaluation plots.
+The official test split has a different distribution and attack types absent
+from training; the gap shows that training-fold scores do not represent
+performance on the harder official test set.
 
-* **Backend & Logic:** Python
-* **Machine Learning:** Scikit-learn, Pandas, NumPy
-* **Frontend UI:** Streamlit
-* **Data Visualization:** Plotly Express
-* **Security Focus:** Network Traffic Analysis, Anomaly Detection, Intrusion Detection Systems (IDS)
+The legacy 500-row validation CSV overlaps the training split in **all 500
+rows**. Its perfect score is not independent validation; see
+[reports/notes.md](reports/notes.md).
 
-## 📋 Prerequisites
+## Run the app
 
-Before installing Sentinel AI, ensure your system has:
-
-* **Python 3.8+**
-* A package manager like `pip`
-* Git (optional, for cloning)
-
-## 🛠️ Installation & Setup
-
-It is highly recommended to use a virtual environment to avoid dependency conflicts.
-
-**1. Clone the Repository**
-
-```bash
-git clone https://github.com/ShkS44D/Sentinal-AI.git
-cd Sentinel-AI
-```
-
-**2. Create & Activate a Virtual Environment**
-
-Windows:
+Use Python 3.10 or newer. From the project root:
 
 ```powershell
-python -m venv venv
-.\venv\Scripts\activate
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python scripts/download_data.py
+streamlit run app/main.py
 ```
 
-Mac/Linux:
+**Manual Scan** lets you enter all 39
+features with training-based ranges or load a real test example. **Batch Scan**
+accepts headed CSV files or original NSL-KDD text files, validates them, and
+scans up to 100,000 rows. It includes threshold and severity controls,
+filters, a results CSV, and a one-page HTML summary. Use
+[`data/sample_traffic.csv`](data/sample_traffic.csv) to try the full workflow.
+Sample Detection still selects one test row and hides its ground truth until
+requested. AI Analytics shows global Random Forest feature importance.
 
-```bash
-python3 -m venv venv
-source venv/bin/activate
+Batch CSVs need the 39 feature columns listed in the downloadable template.
+`protocol_type`, `service`, and `flag` may contain raw names or training encoder
+integers; the page explains which form it detected. Optional `label_binary` or
+`class` columns use 0 for normal and 1 for anomaly. An optional `attack` column
+uses NSL-KDD attack names. Uploaded labels enable live precision, recall, and
+false-positive counts when the threshold changes. Without labels, the page
+shows prediction counts only. Severity bands classify anomaly probability;
+their cutoffs are adjustable and separate from the anomaly decision threshold.
+
+## Saved history and investigations
+
+Every Manual Scan and Batch Scan is saved to the local SQLite database at
+`data/sentinel.db` (Git ignored). Sample Detection also saves its real NSL-KDD
+test example as a clearly tagged demo scan. The **Dashboard** now reads only
+saved scan data: totals, anomaly rate, open alerts, time series, top services
+and protocols, and recent activity. It shows an empty state before the first
+scan. Model evaluation remains in the generated reports rather than being
+mixed with operational dashboard counts.
+
+The **Alerts** page lists saved anomaly predictions with search, filters,
+sorting and pagination. Open an alert to see all feature values, descriptive
+feature observations, status history and analyst notes. The observations are
+simple rules based on values; they are not explanations of the model's internal
+decision. Analysts can update several alerts together and export filtered
+alerts to CSV. Statuses are New, Investigating, Confirmed, False Positive and
+Resolved. Saved threshold changes update stored classifications without
+rerunning the model.
+
+**Settings** shows database size, exports/imports a ZIP of the four database
+tables as CSV, deletes tagged demo scans, or deletes all scan data after typed
+confirmation. A minimal deletion receipt remains in the audit trail. Database
+import replaces current local data and requires confirmation. See
+[docs/HISTORY.md](docs/HISTORY.md) for schema and backup details.
+
+## Reproduce training and reports
+
+```powershell
+python -m src.train
 ```
 
-**3. Install Dependencies**
+The command fits preprocessing on training data only, compares Random Forest,
+Logistic Regression and Histogram Gradient Boosting with stratified five-fold
+cross-validation, fits the Random Forest on full `KDDTrain+`, and evaluates it
+once on `KDDTest+`. It regenerates `models/v1/`, `reports/metrics.json`,
+`reports/metrics.md`, the evaluation plots and this README's metric table.
+Random seed: 42. See [docs/DATA.md](docs/DATA.md) for source URLs, hashes,
+column definitions and attack-family mapping.
 
-```bash
-pip install -r requirements.txt
+For tests and lint:
+
+```powershell
+python -m pip install -r requirements-dev.txt
+python -m pytest
+ruff check .
 ```
 
-## 💻 Usage
-
-**1. Start the Command Center**
-
-With your virtual environment activated, launch the Streamlit dashboard:
-
-```bash
-streamlit run app.py
-```
-
-**2. Analyze Traffic**
-
-* Your default web browser will automatically open to `http://localhost:8501`.
-* Navigate the sidebar to view the dashboard, run live network packet simulations, or explore the model's feature importance charts.
-
-## 📂 Project Structure
-
-Ensure your directory is organized exactly as follows so the Streamlit application can locate the necessary ML artifacts:
+## Project layout
 
 ```text
-Sentinel-AI/
-│
-├── app.py                 # Main Streamlit command center application
-├── requirements.txt       # Project dependencies
-└── models/                # Directory for ML artifacts and encoders
-    ├── RandomForest_model.pkl
-    ├── scaler.pkl
-    ├── label_encoders.pkl
-    ├── feature_names.pkl
-    └── validation_with_labels.csv
+app/                 Streamlit pages and entry point
+src/                 Data, model, scan, persistence, investigation and reports
+scripts/             Data download and legacy overlap check
+data/                Downloaded NSL-KDD text files (Git ignored), tracked sample CSV
+                      and local SQLite history (Git ignored)
+models/v1/           Versioned joblib artifacts and metadata
+models/legacy/       Original pickle artifacts and 500-row sample
+reports/             Generated test metrics, notes and figures
+notebooks/           Lightweight exploratory analysis
+docs/                Dataset and feature documentation
+tests/               Automated checks
 ```
 
-## 📊 Model Performance
+## Limitations and safety
 
-The underlying Random Forest model analyzes key network indicators such as source bytes, destination bytes, and connection duration. Sudden spikes or irregular ratios in these specific features act as strong indicators of DoS (Denial of Service) or reconnaissance patterns, which the model flags with high confidence, minimizing false positives.
+NSL-KDD is based on old network traffic. This binary model should not be
+treated as a deployed intrusion prevention system. It has no packet capture,
+sensor integration, blocking or mitigation. The official test results show
+substantial missed anomalies. Model confidence is not a calibrated guarantee.
 
-## 👨‍💻 Author
+Joblib and pickle files can execute code when loaded. The app loads only the
+bundled artifacts; never replace them with files from an untrusted source.
+The original pickle files remain in `models/legacy/` for reproducibility.
 
-**Muhammad Saad Ahmed**
+## Repository and license
 
-* **Focus:** Cybersecurity, Offensive Security, Penetration Testing, & Bug Bounty Hunting.
-* **Academic Background:** B.S. Cyber Security, CASE Sir Syed Institute of Technology, Islamabad.
-* **LinkedIn:** [S44D](https://www.linkedin.com/in/shsaadahmed/)
+[GitHub repository](https://github.com/ShkS44D/Sentinal-AI). Licensed under
+MIT; copyright Muhammad Saad Ahmed. See [LICENSE](LICENSE).

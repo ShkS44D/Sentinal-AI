@@ -1,0 +1,51 @@
+{
+  "dataset": "NSL-KDD",
+  "train_split": "KDDTrain+.txt",
+  "test_split": "KDDTest+.txt",
+  "model": "Random Forest",
+  "train_rows": 125973,
+  "test_rows": 22544,
+  "cv_folds": 5,
+  "random_seed": 42,
+  "evaluation": {
+    "accuracy": 0.7636621717530163,
+    "precision": 0.9658597144630664,
+    "recall": 0.606249512974363,
+    "f1": 0.7449253159708924,
+    "false_positive_rate": 0.028318401812377717,
+    "roc_auc": 0.9655974759299302,
+    "pr_auc": 0.9653395559971732,
+    "confusion_matrix": {
+      "tn": 9436,
+      "fp": 275,
+      "fn": 5053,
+      "tp": 7780
+    }
+  },
+  "cross_validation": [
+    {
+      "model": "Random Forest",
+      "accuracy": 0.9989045284834968,
+      "precision": 0.9994194513000056,
+      "recall": 0.9982261640798227,
+      "f1": 0.9988223966620753,
+      "roc_auc": 0.9999924860082267
+    },
+    {
+      "model": "Logistic Regression",
+      "accuracy": 0.954133039579523,
+      "precision": 0.9618634776642108,
+      "recall": 0.9386662118369437,
+      "f1": 0.9501199658920395,
+      "roc_auc": 0.9904776259396633
+    },
+    {
+      "model": "Histogram Gradient Boosting",
+      "accuracy": 0.9987933931166071,
+      "precision": 0.9990102778011121,
+      "recall": 0.9983967252259935,
+      "f1": 0.9987032978932963,
+      "roc_auc": 0.9999680033391505
+    }
+  ]
+}
