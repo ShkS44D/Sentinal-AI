@@ -1,4 +1,4 @@
-# Sentinel IDS
+# Sentinel IDS v1.0
 
 [![Project checks](https://github.com/ShkS44D/Sentinal-AI/actions/workflows/checks.yml/badge.svg)](https://github.com/ShkS44D/Sentinal-AI/actions/workflows/checks.yml)
 
