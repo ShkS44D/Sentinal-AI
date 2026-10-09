@@ -3,10 +3,11 @@
 import streamlit as st
 
 from src.data import MODEL_FEATURES, TEST_PATH, load_nsl_kdd
-from src.feature_info import GROUPS, HINTS, training_category_defaults, training_statistics
+from src.feature_info import GROUPS, HINTS, feature_label, training_category_defaults, training_statistics
 from src.history import reclassify_scan, save_scan
 from src.prediction import PreprocessingError, preprocess
 from src.scan import classify
+from app.ui import page_header
 
 
 @st.cache_data(show_spinner=False)
@@ -37,8 +38,8 @@ def _initial_values(assets, stats):
 
 
 def render(assets):
-    st.title("✍️ Manual Scan")
-    st.caption("Enter all 39 NSL-KDD connection features. Input ranges and defaults come from KDDTrain+.")
+    page_header("Manual Scan", "Analyze one connection using the 39 model features.")
+    st.caption("Start with a recorded example or enter your values. Ranges and defaults come from KDDTrain+. Hover over a field's help icon for its definition.")
     try:
         stats = training_statistics()
     except (OSError, ValueError) as exc:
@@ -64,13 +65,13 @@ def render(assets):
             with st.expander(group, expanded=group == "Basic connection"):
                 columns = st.columns(3)
                 for index, name in enumerate(names):
-                    label = name.replace("_", " ").title()
+                    label = feature_label(name)
                     key = f"manual_{name}"
                     with columns[index % 3]:
                         if name in assets.encoders:
                             st.selectbox(
                                 label, options=list(assets.encoders[name].classes_),
-                                key=key, help=HINTS[name],
+                                key=key, help=f"{HINTS[name]} Dataset column: {name}.",
                             )
                         else:
                             limits = stats[name]
@@ -79,7 +80,7 @@ def render(assets):
                                 min_value=int(limits["min"]) if limits["integer"] else limits["min"],
                                 max_value=int(limits["max"]) if limits["integer"] else limits["max"],
                                 step=1 if limits["integer"] else 0.01,
-                                key=key, help=HINTS[name],
+                                key=key, help=f"{HINTS[name]} Dataset column: {name}.",
                             )
         submitted = st.form_submit_button("Run manual scan", type="primary")
     if submitted:
@@ -104,6 +105,9 @@ def render(assets):
             st.session_state["manual_result"] = probability
             st.session_state["manual_scan_id"] = scan_id
     if "manual_result" in st.session_state:
+        st.divider()
+        st.subheader("Scan result")
+        st.caption("Probability is a model score, not proof of an attack. Changing the threshold updates this saved scan.")
         threshold = st.slider("Anomaly threshold", 0.0, 1.0, 0.5, 0.01, key="manual_threshold")
         reclassify_scan(st.session_state["manual_scan_id"], threshold)
         probability = st.session_state["manual_result"]

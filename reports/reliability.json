@@ -1,0 +1,160 @@
+{
+  "dataset": "NSL-KDD",
+  "split": "KDDTest+",
+  "rows": 22544,
+  "decision_rule": "probability >= threshold; exact ties are anomalies",
+  "thresholds": [
+    {
+      "threshold": 0.2,
+      "tp": 10253,
+      "fp": 369,
+      "tn": 9342,
+      "fn": 2580,
+      "precision": 0.9652607795142157,
+      "recall": 0.7989558170342087,
+      "false_positive_rate": 0.037998146431881374
+    },
+    {
+      "threshold": 0.3,
+      "tp": 9138,
+      "fp": 316,
+      "tn": 9395,
+      "fn": 3695,
+      "precision": 0.9665749947112333,
+      "recall": 0.71207044338814,
+      "false_positive_rate": 0.03254041808258676
+    },
+    {
+      "threshold": 0.5,
+      "tp": 7869,
+      "fp": 275,
+      "tn": 9436,
+      "fn": 4964,
+      "precision": 0.9662328094302554,
+      "recall": 0.6131847580456635,
+      "false_positive_rate": 0.028318401812377717
+    },
+    {
+      "threshold": 0.7,
+      "tp": 7268,
+      "fp": 243,
+      "tn": 9468,
+      "fn": 5565,
+      "precision": 0.9676474504060711,
+      "recall": 0.5663523727889036,
+      "false_positive_rate": 0.025023169601482854
+    },
+    {
+      "threshold": 0.9,
+      "tp": 6788,
+      "fp": 211,
+      "tn": 9500,
+      "fn": 6045,
+      "precision": 0.9698528361194456,
+      "recall": 0.5289488038650355,
+      "false_positive_rate": 0.021727937390587992
+    }
+  ],
+  "families": [
+    {
+      "family": "DoS",
+      "rows": 7460,
+      "correct": 5869,
+      "missed_or_false_alarms": 1591,
+      "binary_detection_rate": 0.7867292225201072
+    },
+    {
+      "family": "Normal",
+      "rows": 9711,
+      "correct": 9436,
+      "missed_or_false_alarms": 275,
+      "binary_detection_rate": 0.9716815981876222
+    },
+    {
+      "family": "Probe",
+      "rows": 2421,
+      "correct": 1858,
+      "missed_or_false_alarms": 563,
+      "binary_detection_rate": 0.7674514663362247
+    },
+    {
+      "family": "R2L",
+      "rows": 2885,
+      "correct": 134,
+      "missed_or_false_alarms": 2751,
+      "binary_detection_rate": 0.046447140381282497
+    },
+    {
+      "family": "U2R",
+      "rows": 67,
+      "correct": 8,
+      "missed_or_false_alarms": 59,
+      "binary_detection_rate": 0.11940298507462686
+    }
+  ],
+  "calibration": [
+    {
+      "band": "0.0\u20130.1",
+      "rows": 10851,
+      "mean_probability": 0.0113253946311729,
+      "observed_anomaly_rate": 0.15482444014376556
+    },
+    {
+      "band": "0.1\u20130.2",
+      "rows": 1071,
+      "mean_probability": 0.12849613178604777,
+      "observed_anomaly_rate": 0.8403361344537815
+    },
+    {
+      "band": "0.2\u20130.3",
+      "rows": 1168,
+      "mean_probability": 0.24363670091324202,
+      "observed_anomaly_rate": 0.9546232876712328
+    },
+    {
+      "band": "0.3\u20130.4",
+      "rows": 467,
+      "mean_probability": 0.34599750178443966,
+      "observed_anomaly_rate": 0.9443254817987152
+    },
+    {
+      "band": "0.4\u20130.5",
+      "rows": 843,
+      "mean_probability": 0.44572637406089366,
+      "observed_anomaly_rate": 0.9822064056939501
+    },
+    {
+      "band": "0.5\u20130.6",
+      "rows": 388,
+      "mean_probability": 0.5310728399607266,
+      "observed_anomaly_rate": 0.9561855670103093
+    },
+    {
+      "band": "0.6\u20130.7",
+      "rows": 245,
+      "mean_probability": 0.6480790087463556,
+      "observed_anomaly_rate": 0.9387755102040817
+    },
+    {
+      "band": "0.7\u20130.8",
+      "rows": 204,
+      "mean_probability": 0.744639705882353,
+      "observed_anomaly_rate": 0.946078431372549
+    },
+    {
+      "band": "0.8\u20130.9",
+      "rows": 308,
+      "mean_probability": 0.8511331168831169,
+      "observed_anomaly_rate": 0.9318181818181818
+    },
+    {
+      "band": "0.9\u20131.0",
+      "rows": 6999,
+      "mean_probability": 0.9945439824736867,
+      "observed_anomaly_rate": 0.9698528361194456
+    }
+  ],
+  "brier_score": 0.16301995627927507,
+  "model_sha256": "baa0c4d613ad9817bb2d5696f204a2394e2c2071d452ba1ea3be60a96c337d7d",
+  "test_sha256": "fa46b0935342616aa83b7c2578db355b6a7aaabbc492248172c7a1e8b7ab8f84"
+}

@@ -5,33 +5,39 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import streamlit as st
+from app.access import require_login
+from src.auth import permitted
 from src.model import ModelLoadError, load_assets
+from app.ui import apply_style, brand
 
 def main():
-    st.set_page_config(page_title="Sentinel IDS | Network Intrusion Detection", page_icon="🛡️", layout="wide")
-    st.markdown(
-        """<style>
-        .stApp {background-color:#0e1117;color:#fff}
-        [data-testid="stMetricValue"] {color:#00d4ff;font-weight:700}
-        section[data-testid="stSidebar"] {background-color:#161b22}
-        .stButton>button {border-radius:8px}
-        </style>""",
-        unsafe_allow_html=True,
-    )
+    st.set_page_config(page_title="Sentinel IDS | Network Intrusion Detection", layout="wide")
+    apply_style()
+    with st.sidebar:
+        brand()
+    role = require_login()
     try:
         assets = load_assets()
     except ModelLoadError as exc:
         st.error(str(exc))
         st.stop()
     with st.sidebar:
-        st.title("🛡️ Sentinel IDS")
-        st.caption("NSL-KDD demonstration")
+        pages = ["Dashboard", "Manual Scan", "Batch Scan", "Alerts",
+                 "Sample Detection", "Flow Import", "AI Analytics", "Settings"]
+        pages = [name for name in pages if permitted(role, name)]
+        if st.session_state.get("nav") not in pages:
+            st.session_state["nav"] = "Dashboard"
         page = st.radio(
-            "COMMAND CENTER",
-            ("Dashboard", "Manual Scan", "Batch Scan", "Alerts", "Settings",
-             "Sample Detection", "AI Analytics"),
+            "WORKSPACE",
+            pages,
             key="nav",
+            format_func=lambda name: {"Dashboard": "Overview", "AI Analytics": "Model Insights"}.get(name, name),
         )
+        st.divider()
+        st.caption("Model v1 · NSL-KDD benchmark")
+        st.caption("Binary Normal / Anomaly. No live packet capture.")
+        if st.session_state.get("local_demo_mode"):
+            st.caption("Local demo mode · accounts not configured")
     if page == "Dashboard":
         from app.pages.dashboard import render
     elif page == "Manual Scan":
@@ -44,6 +50,8 @@ def main():
         from app.pages.settings import render
     elif page == "Sample Detection":
         from app.pages.detection import render
+    elif page == "Flow Import":
+        from app.pages.flows import render
     else:
         from app.pages.analytics import render
     render(assets)

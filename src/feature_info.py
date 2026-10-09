@@ -90,3 +90,12 @@ def training_statistics():
 def training_category_defaults():
     training = load_nsl_kdd(TRAIN_PATH)
     return {name: str(training[name].mode().iloc[0]) for name in CATEGORICAL}
+
+
+def feature_label(name):
+    """Expand benchmark abbreviations for analyst-facing controls."""
+    words = name.split("_")
+    replacements = {"src": "source", "dst": "destination", "srv": "service",
+                    "num": "number of", "serror": "SYN error", "rerror": "rejection error",
+                    "su": "superuser"}
+    return " ".join(replacements.get(word, word) for word in words).capitalize()

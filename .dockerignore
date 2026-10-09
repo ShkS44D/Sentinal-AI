@@ -1,0 +1,13 @@
+.venv
+venv
+.git
+__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.streamlit/secrets.toml
+.streamlit/users.json
+*users.private.json
+.env
+data/*.db*
+data/KDD*.txt

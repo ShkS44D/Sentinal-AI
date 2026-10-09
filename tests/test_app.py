@@ -12,8 +12,8 @@ def test_pages_and_scan_flow(monkeypatch, tmp_path):
     monkeypatch.setenv("SENTINEL_DB_PATH", str(tmp_path / "sentinel.db"))
     app = AppTest.from_file(str(APP)).run(timeout=30)
     assert not app.exception
-    assert any("No saved scans yet" in item.value for item in app.info)
-    app.button[0].click().run(timeout=30)
+    assert any("No saved scans yet" in item.value for item in app.markdown)
+    next(button for button in app.button if button.label == "Open Manual Scan").click().run(timeout=30)
     assert not app.exception
     assert app.sidebar.radio[0].value == "Manual Scan"
     app.sidebar.radio[0].set_value("Dashboard").run(timeout=30)
@@ -54,8 +54,31 @@ def test_new_scan_pages_render(monkeypatch, tmp_path):
     assert saved["family"] in {"DoS", "Probe", "R2L", "U2R"}
     app.sidebar.radio[0].set_value("Batch Scan").run(timeout=30)
     assert not app.exception
-    assert any(title.value == "📂 Batch Scan" for title in app.title)
+    assert any(title.value == "Batch Scan" for title in app.title)
     app.sidebar.radio[0].set_value("Alerts").run(timeout=30)
     assert not app.exception
+
+
+def test_overview_sample_scan_is_saved_once(monkeypatch, tmp_path):
+    from src.history import dashboard_data
+
+    database = tmp_path / "history.db"
+    monkeypatch.setenv("SENTINEL_DB_PATH", str(database))
+    app = AppTest.from_file(str(APP)).run(timeout=30)
+    next(button for button in app.button if button.label == "Try sample scan").click().run(timeout=30)
+    assert not app.exception
+    assert app.sidebar.radio[0].value == "Batch Scan"
+    assert app.session_state["batch_source"] == "Bundled test sample"
+    counts = dashboard_data(database)
+    assert counts["scans"] == counts["demo_scans"] == 1
+    assert counts["detections"] == 20
+    assert any(metric.label == "Rows scanned" and metric.value == "20" for metric in app.metric)
+    app.run(timeout=30)
+    assert dashboard_data(database)["scans"] == 1
+    app.sidebar.radio[0].set_value("Dashboard").run(timeout=30)
+    assert app.metric[0].value == "1"
+    next(button for button in app.button if button.label == "Review alerts").click().run(timeout=30)
+    assert not app.exception
+    assert app.sidebar.radio[0].value == "Alerts"
     app.sidebar.radio[0].set_value("Settings").run(timeout=30)
     assert not app.exception

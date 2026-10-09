@@ -1,0 +1,52 @@
+:root { --sentinel-blue:#2563eb; --sentinel-ink:#172b4d; --sentinel-muted:#526581; --sentinel-border:#dce3ed; }
+.stApp { background:#fff; color:var(--sentinel-ink); }
+[data-testid="stAppViewContainer"] > .main { background:#fff; }
+[data-testid="stMainBlockContainer"] { padding:2.6rem 3rem 3rem; max-width:1400px; }
+h1 { font-size:2rem !important; font-weight:650 !important; letter-spacing:-.035em; color:var(--sentinel-ink); padding-bottom:.3rem !important; }
+h2 { font-size:1.25rem !important; font-weight:600 !important; letter-spacing:-.015em; }
+h3 { font-size:1.1rem !important; font-weight:600 !important; }
+p, label, [data-testid="stCaptionContainer"] { line-height:1.55; }
+[data-testid="stCaptionContainer"] { color:var(--sentinel-muted); }
+[data-testid="stCaptionContainer"] p { color:var(--sentinel-muted); }
+hr { border-color:var(--sentinel-border); margin:1rem 0 !important; }
+[data-testid="stSidebar"] { background:#f3f6fa; border-right:1px solid var(--sentinel-border); }
+[data-testid="stSidebarUserContent"] { padding:1.7rem 1.25rem; }
+.sentinel-brand { display:flex; gap:12px; align-items:center; color:var(--sentinel-ink); margin:0 0 1.7rem; }
+.sentinel-brand strong { display:block; font-size:21px; font-weight:650; letter-spacing:-.025em; }
+.sentinel-brand span { display:block; font-size:11px; color:var(--sentinel-muted); margin-top:3px; }
+[data-testid="stSidebar"] [data-testid="stRadio"] > label { font-size:11px; color:var(--sentinel-muted); letter-spacing:.08em; }
+[data-testid="stSidebar"] [data-testid="stRadio"] [role="radiogroup"] { gap:3px; }
+[data-testid="stSidebar"] label[data-baseweb="radio"] { border-left:3px solid transparent; border-radius:4px; padding:9px 10px; margin:0; min-height:42px; width:100%; box-sizing:border-box; }
+[data-testid="stSidebar"] label[data-baseweb="radio"] > div:first-child { display:none; }
+[data-testid="stSidebar"] label[data-baseweb="radio"]:has(input:checked) { border-left-color:var(--sentinel-blue); background:#e4edfc; color:#174ac3; }
+[data-testid="stSidebar"] label[data-baseweb="radio"]:has(input:checked) p { color:#174ac3; font-weight:600; }
+[data-testid="stSidebar"] label[data-baseweb="radio"]:hover { background:#eaf0f8; }
+[data-testid="stSidebar"] label[data-baseweb="radio"]:focus-within { outline:2px solid var(--sentinel-blue); outline-offset:2px; }
+.stButton button, .stDownloadButton button, [data-testid="stFormSubmitButton"] button { border-radius:6px; min-height:40px; font-weight:500; box-shadow:none; }
+.stButton button[kind="secondary"], .stDownloadButton button { border:1px solid #bbcbe1; color:#204e9b; }
+.stButton button[kind="primary"], [data-testid="stFormSubmitButton"] button[kind="primary"] { background:var(--sentinel-blue); border-color:var(--sentinel-blue); color:white; }
+[data-testid="stMetric"] { border:1px solid var(--sentinel-border); border-radius:6px; padding:16px 18px; background:#fff; }
+[data-testid="stMetricValue"] { color:var(--sentinel-ink); font-size:1.7rem; font-weight:600; }
+[data-testid="stMetricLabel"] { color:var(--sentinel-muted); }
+[data-testid="stExpander"] { border-color:var(--sentinel-border); border-radius:6px; }
+[data-testid="stForm"] { border-color:var(--sentinel-border); border-radius:6px; }
+.workflow { display:flex; align-items:center; justify-content:center; gap:24px; padding:12px 0 20px; color:var(--sentinel-muted); font-size:14px; }
+.workflow b { color:var(--sentinel-blue); margin-right:10px; font-weight:650; }
+.flow-arrow { color:#8292a9; }
+.st-key-start_panel { padding:32px 24px 28px; border-color:var(--sentinel-border) !important; }
+.empty-intro { text-align:center; padding:8px 0 12px; }
+.empty-intro svg { color:var(--sentinel-blue); width:48px; height:54px; margin-bottom:14px; }
+.empty-intro h2 { font-size:1.4rem !important; margin:0 0 6px; }
+.empty-intro p { color:var(--sentinel-muted); font-size:14px; }
+[data-testid="stDataFrame"] { border-radius:6px; }
+@media(min-width:761px) {
+ [data-testid="stSidebar"] { width:270px !important; min-width:270px !important; max-width:270px !important; }
+}
+@media(max-width:760px) {
+ [data-testid="stMainBlockContainer"] { padding:1.4rem 1rem 2rem; }
+ h1 { font-size:1.6rem !important; }
+ .workflow { gap:10px; font-size:12px; flex-wrap:wrap; justify-content:flex-start; }
+ .workflow b { margin-right:4px; }
+ .st-key-start_panel { padding:20px 12px; }
+ .empty-intro h2 { font-size:1.2rem !important; }
+}

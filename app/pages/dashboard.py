@@ -4,8 +4,10 @@ import json
 
 import pandas as pd
 import streamlit as st
+import plotly.express as px
 
 from src.history import dashboard_data
+from app.ui import SHIELD, chart_style, navigate, page_header, workflow
 
 
 def _open_manual_scan():
@@ -13,13 +15,35 @@ def _open_manual_scan():
 
 
 def render(_assets):
-    st.title("🛡️ Network Security Intelligence")
-    st.caption("Saved local scan history. Times are recorded in UTC.")
+    page_header("Overview", "Review saved scans and investigate predicted anomalies.")
+    workflow()
     data = dashboard_data()
     if not data["scans"]:
-        st.info("No saved scans yet. Run a Manual Scan or upload a file in Batch Scan to start your history.")
-        st.button("Open Manual Scan", on_click=_open_manual_scan)
+        with st.container(border=True, key="start_panel"):
+            st.markdown(f'<div class="empty-intro">{SHIELD}<h2>Your investigation starts here</h2><p>No saved scans yet. Choose a real test sample or upload connection records.</p></div>', unsafe_allow_html=True)
+            actions = st.columns([1, 2, 2, 1])
+            actions[1].button("Try sample scan", type="primary", on_click=navigate,
+                              args=("Batch Scan",), kwargs={"sample": True}, use_container_width=True)
+            actions[2].button("Open Manual Scan", on_click=_open_manual_scan, use_container_width=True)
+        st.divider()
+        left, right = st.columns(2, gap="large")
+        with left:
+            st.subheader("Scan your records")
+            st.caption("Upload the 39 model features in CSV or original NSL-KDD format.")
+            st.button("Open Batch Scan", on_click=navigate, args=("Batch Scan",))
+        with right:
+            st.subheader("Understand the model")
+            st.caption("Review measured test results and the limitations behind every prediction.")
+            st.button("View model insights", on_click=navigate, args=("AI Analytics",))
+        st.divider()
+        st.caption("NSL-KDD benchmark · Binary Normal / Anomaly · No live packet capture")
         return
+
+    actions = st.columns([1, 1, 1, 3])
+    actions[0].button("New batch scan", type="primary", on_click=navigate, args=("Batch Scan",), use_container_width=True)
+    actions[1].button("Manual scan", on_click=navigate, args=("Manual Scan",), use_container_width=True)
+    actions[2].button("Review alerts", on_click=navigate, args=("Alerts",), use_container_width=True)
+    st.caption("Saved local scan history · all times in UTC")
 
     totals = st.columns(4)
     totals[0].metric("Total scans", data["scans"])
@@ -56,19 +80,25 @@ def render(_assets):
     if timeline.empty:
         st.info("No detections have been saved.")
     else:
-        st.line_chart(timeline.set_index("day")[["detections", "anomalies"]])
+        chart = px.line(timeline, x="day", y=["detections", "anomalies"], markers=True,
+                        labels={"day": "Date (UTC)", "value": "Connections", "variable": "Series"})
+        st.plotly_chart(chart_style(chart), use_container_width=True)
 
     services, protocols = st.columns(2)
     with services:
         st.subheader("Top services among anomalies")
         if data["top_services"]:
-            st.bar_chart(pd.DataFrame(data["top_services"]).set_index("name"))
+            chart = px.bar(pd.DataFrame(data["top_services"]), x="name", y="count",
+                           labels={"name": "Service", "count": "Anomalies"})
+            st.plotly_chart(chart_style(chart), use_container_width=True)
         else:
             st.caption("No predicted anomalies yet.")
     with protocols:
         st.subheader("Top protocols among anomalies")
         if data["top_protocols"]:
-            st.bar_chart(pd.DataFrame(data["top_protocols"]).set_index("name"))
+            chart = px.bar(pd.DataFrame(data["top_protocols"]), x="name", y="count",
+                           labels={"name": "Protocol", "count": "Anomalies"})
+            st.plotly_chart(chart_style(chart), use_container_width=True)
         else:
             st.caption("No predicted anomalies yet.")
 

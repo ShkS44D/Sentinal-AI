@@ -7,6 +7,22 @@ identify a specific attack type.
 
 ## Measured performance
 
+**Model Insights** includes a reliability report with errors by recorded attack
+family, threshold trade-offs and probability bins. Alert details offer an
+optional model sensitivity comparison against training reference values.
+**Flow Import** reviews real Zeek JSON connection logs without inventing missing
+NSL-KDD features or assigning unsupported scores. **Sample Detection** includes
+a guided first scan.
+
+The interface uses a blue-and-white theme with an **Overview**, consistent page
+headings and clearly labeled scan steps. Select **Try sample scan** from the
+Overview or Batch Scan to process the bundled real test rows in one click;
+these scans are tagged as demo activity. Restart Streamlit after updating the
+theme configuration.
+
+Optional administrator/analyst accounts, container setup and automated GitHub
+checks are documented in [docs/OPERATIONS.md](docs/OPERATIONS.md).
+
 <!-- METRICS:START -->
 Random Forest on **NSL-KDD KDDTest+** (22,544 rows), trained on **KDDTrain+** (125,973 rows):
 

@@ -4,12 +4,18 @@ import streamlit as st
 from src.data import TEST_PATH, load_nsl_kdd
 from src.history import save_scan
 from src.prediction import PreprocessingError, predict
+from app.ui import page_header
 
 SAMPLES = TEST_PATH
 
 def render(assets):
-    st.title("🔍 Sample Detection")
+    page_header("Sample Detection", "Compare a model prediction with a recorded official test example.")
     st.info("Demo: choose a stored NSL-KDD official test row and run the binary classifier. This is not live network capture.")
+    with st.expander("First scan: a three-step guide", expanded=True):
+        st.write("1. Choose a sample to inspect a real recorded test connection.")
+        st.write("2. Run scan to predict Normal or Anomaly and save a clearly tagged demo record.")
+        st.write("3. Reveal the recorded label and compare it with the prediction. Open Alerts to investigate a predicted anomaly.")
+        st.caption("A correct sample prediction does not establish overall reliability. See AI Analytics for the full official test results.")
     if st.button("Choose random sample"):
         try:
             st.session_state["current_sample"] = load_nsl_kdd(SAMPLES).sample(1).iloc[0]

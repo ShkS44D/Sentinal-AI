@@ -10,10 +10,11 @@ from src.history import (
     audit_events, database_size, dashboard_data, delete_all_data, delete_demo_data,
     export_database_csv, import_database_csv,
 )
+from app.ui import page_header
 
 
 def render(_assets):
-    st.title("⚙️ Settings & Data")
+    page_header("Settings", "Manage local history, backups, and audit records.")
     st.caption("Scan history is stored locally in data/sentinel.db. The database is ignored by Git.")
     stats = dashboard_data()
     summary = st.columns(3)

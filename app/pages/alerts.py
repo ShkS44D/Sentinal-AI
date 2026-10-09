@@ -9,12 +9,13 @@ from src.history import (
     SORTS, STATUSES, alert_filter_options, export_alerts_csv, get_detection,
     query_alerts, status_timeline, update_alerts,
 )
-from src.investigation import explain_alert
+from src.investigation import explain_alert, sensitivity_evidence
+from src.feature_info import feature_label, training_category_defaults, training_statistics
+from app.ui import page_header, navigate
 
 
 def render(_assets):
-    st.title("🚨 Alerts")
-    st.caption("Predicted anomalies from saved scans. Status and notes stay available after restart.")
+    page_header("Alerts", "Review predicted anomalies, record evidence, and track investigations.")
     options = alert_filter_options()
     controls = st.columns(3)
     search = controls[0].text_input("Search ID, features or notes")
@@ -51,22 +52,27 @@ def render(_assets):
     st.metric("Matching alerts", total)
     if not total:
         st.info("No anomalies match these filters. Run a scan or adjust the filters.")
+        st.button("Open Batch Scan", on_click=navigate, args=("Batch Scan",))
         return
     columns = ("id", "timestamp", "severity", "status", "probability",
                "protocol_type", "service", "source", "is_demo")
     table = pd.DataFrame(rows)[list(columns)].rename(columns={"is_demo": "demo"})
+    table["timestamp"] = pd.to_datetime(table["timestamp"], utc=True)
     st.dataframe(
         table, hide_index=True, use_container_width=True,
-        column_config={"probability": st.column_config.ProgressColumn(
+        column_config={"id": "Alert ID", "timestamp": st.column_config.DatetimeColumn("Detected at (UTC)", format="YYYY-MM-DD HH:mm"),
+                       "severity": "Severity", "status": "Status", "protocol_type": "Protocol",
+                       "service": "Service", "source": "Source", "demo": st.column_config.CheckboxColumn("Demo record"),
+                       "probability": st.column_config.ProgressColumn(
             "Anomaly probability", min_value=0, max_value=1, format="%.2f"
         )},
     )
     paging = st.columns([1, 2, 1])
-    if paging[0].button("← Previous", disabled=page <= 1):
+    if paging[0].button("Previous", disabled=page <= 1):
         st.session_state["alert_page"] = page - 1
         st.rerun()
     paging[1].caption(f"Page {page} of {max_page}")
-    if paging[2].button("Next →", disabled=page >= max_page):
+    if paging[2].button("Next", disabled=page >= max_page):
         st.session_state["alert_page"] = page + 1
         st.rerun()
 
@@ -113,11 +119,21 @@ def render(_assets):
     headline[2].metric("Status", detail["status"])
     st.info("Feature observations (descriptive heuristics; not a model explanation): "
             + explain_alert(detail["features"]))
+    if st.button("Explore model sensitivity"):
+        try:
+            stats = training_statistics()
+            reference = {name: values["default"] for name, values in stats.items()}
+            reference.update(training_category_defaults())
+            evidence = sensitivity_evidence(detail["features"], reference, _assets)
+            st.caption("Each row replaces one feature with its training reference value. Positive changes mean the observed value increases the anomaly score compared with that reference. This is sensitivity, not causal proof; correlated features can make replacements unrealistic.")
+            st.dataframe(evidence, hide_index=True)
+        except (OSError, ValueError, KeyError) as exc:
+            st.warning(f"Sensitivity evidence unavailable: {exc}")
     if detail["family"]:
         st.caption(f"Dataset family label: {detail['family']} (provided with the scanned row)")
     st.write("Full connection features")
     st.dataframe(
-        pd.DataFrame([{"Feature": key, "Value": value} for key, value in detail["features"].items()]),
+        pd.DataFrame([{"Feature": feature_label(key), "Dataset column": key, "Value": str(value)} for key, value in detail["features"].items()]),
         hide_index=True, use_container_width=True,
     )
     with st.form(f"investigate_{alert_id}"):
